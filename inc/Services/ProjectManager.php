@@ -67,7 +67,7 @@ class ProjectManager
             }
 
             $this->install_provider($provider);
-            $this->interactor->info("Successfully installed $package provider successful");
+            $this->interactor->info("$package: Successfully installed provider successful\n");
 
             $command = $this->get_command($configs);
 
@@ -76,12 +76,20 @@ class ProjectManager
             }
 
             if(! $this->should_auto_install($configs) ) {
-                $this->interactor->info("Please run '$command' to finish the installation");
+                $this->interactor->info("$package: Please run '$command' to finish the installation\n");
                 continue;
             }
 
             $this->auto_install($command);
-            $this->interactor->info("Take off from $package successful");
+            $this->interactor->info("$package: Take off successful\n");
+
+            if(! $this->should_clean($configs)) {
+                continue;
+            }
+
+            $this->clean_up($provider, $package);
+
+            $this->interactor->info("$package: Installation package cleaned\n");
         }
     }
 
@@ -165,5 +173,31 @@ class ProjectManager
         $shell = new Shell("{$this->filesystem->getAdapter()->getPathPrefix()}/bin/generator $command");
 
         $shell->execute();
+    }
+
+    protected function should_clean(array $configs) {
+        if( ! key_exists('clean', $configs) ) {
+            return false;
+        }
+
+        return $configs['clean'];
+    }
+
+    protected function clean_up( string $provider, string $package ) {
+        $content = $this->filesystem->read(self::BUILDER_FILE);
+
+        $content = preg_replace('/\n *\\\\' . preg_quote($provider) . '::class,\n/', '', $content);
+
+        $this->filesystem->update(self::BUILDER_FILE, $content);
+
+        $json = json_decode($content, true);
+
+        if(key_exists('require-dev', $json) && key_exists($package, $json['require-dev'])) {
+            unset($json['require-dev'][$package]);
+        }
+
+        $content = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . "\n";
+
+        $this->filesystem->update(self::PROJECT_FILE, $content);
     }
 }
