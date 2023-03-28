@@ -14,7 +14,7 @@ class InstallModuleCommand extends Command
 
     public function __construct(ProjectManager $project_manager)
     {
-        parent::__construct('initialize', 'Initialize the project');
+        parent::__construct('auto-install', 'Auto install modules');
 
         $this->project_manager = $project_manager;
 
@@ -23,7 +23,7 @@ class InstallModuleCommand extends Command
             // Usage examples:
             ->usage(
             // append details or explanation of given example with ` ## ` so they will be uniformly aligned when shown
-                '<bold>  $0 auto-install</end> ## Auto install <eol/>'
+                '<bold>  $0 auto-install</end> ## Auto install modules<eol/>'
             );
     }
 
