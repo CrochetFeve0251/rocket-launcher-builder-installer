@@ -39,16 +39,16 @@ class ProjectManager
 
     public function install() {
         if( ! $this->filesystem->has(self::PROJECT_FILE)) {
-            return false;
+            return;
         }
 
         $content = $this->filesystem->read(self::PROJECT_FILE);
         $json = json_decode($content,true);
         if(! $json || ! array_key_exists('require-dev', $json)) {
-            return false;
+            return;
         }
         $required = $json['require-dev'];
-        $to_install = [];
+
         foreach ($required as $package => $version) {
             if(! preg_match('/-take-off$/', $package)) {
                 continue;
@@ -83,7 +83,6 @@ class ProjectManager
             $this->auto_install($command);
             $this->interactor->info("Take off from $package successful");
         }
-
     }
 
     protected function get_library_configurations(string $name) {
@@ -108,37 +107,33 @@ class ProjectManager
     }
 
     protected function has_provider_installed(string $provider){
-        $base_namespace = $this->configurations->getBaseNamespace();
-        $providers_path = 'configs/providers.php';
 
-        if ( ! $this->filesystem->has( $providers_path ) ) {
+        if ( ! $this->filesystem->has( self::BUILDER_FILE ) ) {
             return true;
         }
 
-        $content = $this->filesystem->read( $providers_path );
+        $content = $this->filesystem->read( self::BUILDER_FILE );
 
-        return preg_match("/\\\\?$base_namespace\\\\Dependencies\\\\" . $provider . "::class,?/", $content);
+        return preg_match("/\\\\?" . $provider . "::class,?/", $content);
     }
 
     protected function install_provider(string $provider) {
-        $base_namespace = $this->configurations->getBaseNamespace();
-        $providers_path = 'configs/providers.php';
 
-        if ( ! $this->filesystem->has( $providers_path ) ) {
+        if ( ! $this->filesystem->has( self::BUILDER_FILE ) ) {
             return;
         }
 
-        $content = $this->filesystem->read( $providers_path );
+        $content = $this->filesystem->read( self::BUILDER_FILE );
 
         if(! preg_match('/(?<array>return\s\[(?<content>(?:[^[\]]+|(?R))*)\]\s*;\s*$)/', $content, $results)) {
             return;
         }
 
         $result_content = $results['content'];
-        $result_content = "\n    \\$base_namespace\\Dependencies\\" . $provider . "::class," . $result_content;
+        $result_content = "\n    \\" . $provider . "::class," . $result_content;
         $content = str_replace($results['content'], $result_content, $content);
 
-        $this->filesystem->update($providers_path, $content);
+        $this->filesystem->update(self::BUILDER_FILE, $content);
     }
 
     protected function get_command(array $configs) {

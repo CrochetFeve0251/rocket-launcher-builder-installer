@@ -3,7 +3,6 @@
 namespace RocketLauncherBuilderInstaller\Command;
 
 use RocketLauncherBuilder\Commands\Command;
-use RocketLauncherBuilder\Entities\Configurations;
 use RocketLauncherBuilderInstaller\Services\ProjectManager;
 
 class InstallModuleCommand extends Command
