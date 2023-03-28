@@ -90,7 +90,7 @@ class ProjectManager
         if(! $this->filesystem->has($composer_file)) {
             return [];
         }
-        $content = $this->filesystem->read(self::PROJECT_FILE);
+        $content = $this->filesystem->read($composer_file);
         $json = json_decode($content,true);
         if(! $json || ! key_exists('extra', $json) || ! key_exists('rocket-launcher', $json['extra'])) {
             return [];
