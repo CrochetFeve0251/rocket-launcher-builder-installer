@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "crochetfeve0251/rocket-launcher-builder-installer": "^0.0.1",
+    "crochetfeve0251/rocket-launcher-builder": "^1.0.0",
     "ext-json": "*"
   },
   "require-dev": {
