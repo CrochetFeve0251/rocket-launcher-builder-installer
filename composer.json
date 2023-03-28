@@ -2,7 +2,7 @@
   "name": "crochetfeve0251/rocket-launcher-builder-installer",
   "description": "Initialisation library rocket launcher modules",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "GPL-2.0-or-later",
   "type": "library",
   "authors": [
     {
@@ -11,10 +11,8 @@
     }
   ],
   "require": {
-    "crochetfeve0251/rocket-launcher-builder": "^0.0.5",
-    "ext-mbstring": "*",
-    "ext-json": "*",
-    "composer/composer": "^2.5"
+    "crochetfeve0251/rocket-launcher-builder-installer": "^0.0.1",
+    "ext-json": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5 || ^8 || ^9",
