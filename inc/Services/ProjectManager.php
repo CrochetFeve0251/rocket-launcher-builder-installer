@@ -67,21 +67,16 @@ class ProjectManager
             }
 
             $this->install_provider($provider);
+
             $this->interactor->info("$package: Successfully installed provider successful\n");
 
-            $command = $this->get_command($configs);
+            $libraries = $this->get_libraries($configs);
 
-            if( ! $command ) {
-                continue;
+            foreach ($libraries as $library => $library_version) {
+                $this->install_library($library, $library_version);
             }
 
-            if(! $this->should_auto_install($configs) ) {
-                $this->interactor->info("$package: Please run '$command' to finish the installation\n");
-                continue;
-            }
-
-            $this->auto_install($command);
-            $this->interactor->info("$package: Take off successful\n");
+            $this->handle_command($configs, $package);
 
             if(! $this->should_clean($configs)) {
                 continue;
@@ -153,6 +148,22 @@ class ProjectManager
         $this->filesystem->update(self::BUILDER_FILE, $content);
     }
 
+    protected function handle_command(array $configs, string $package) {
+        $command = $this->get_command($configs);
+
+        if( ! $command ) {
+            return;
+        }
+
+        if(! $this->should_auto_install($configs) ) {
+            $this->interactor->info("$package: Please run '$command' to finish the installation\n");
+            return;
+        }
+
+        $this->auto_install($command);
+        $this->interactor->info("$package: Take off successful\n");
+    }
+
     protected function get_command(array $configs) {
         if( ! key_exists('command', $configs) ) {
             return '';
@@ -199,5 +210,38 @@ class ProjectManager
         $content = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . "\n";
 
         $this->filesystem->update(self::PROJECT_FILE, $content);
+    }
+
+    protected function get_libraries(array $configs) {
+        if( ! key_exists('libraries', $configs) ) {
+            return [];
+        }
+
+        return $configs['libraries'];
+    }
+
+    protected function install_library(string $library, string $version) {
+        if( ! $this->filesystem->has(self::PROJECT_FILE)) {
+            return false;
+        }
+
+        $content = $this->filesystem->read(self::PROJECT_FILE);
+        $json = json_decode($content,true);
+        if(! $json || ! array_key_exists('require-dev', $json) || ! array_key_exists('extra', $json) || ! array_key_exists('mozart', $json['extra']) || ! array_key_exists('packages', $json['extra']['mozart'])) {
+            return false;
+        }
+
+        if(! key_exists($library, $json['require-dev'])) {
+            $json['require-dev'][$library] = $version;
+        }
+
+        if(! in_array($library, $json['extra']['mozart']['packages'])) {
+            $json['extra']['mozart']['packages'][] = $library;
+        }
+
+        $content = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . "\n";
+        $this->filesystem->update(self::PROJECT_FILE, $content);
+
+        return true;
     }
 }
