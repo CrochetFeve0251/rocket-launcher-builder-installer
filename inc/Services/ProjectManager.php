@@ -125,12 +125,21 @@ class ProjectManager
 
         $content = $this->filesystem->read( self::BUILDER_FILE );
 
-        if(! preg_match('/(?<array>return\s\[(?<content>(?:[^[\]]+|(?R))*)\]\s*;\s*$)/', $content, $results)) {
+        if(! preg_match('/AppBuilder::init\(__DIR__ . \'\/..\/\',\s*(\[(?<content>[^\]]*))?/', $content, $results)) {
+
             return;
         }
 
-        $result_content = $results['content'];
-        $result_content = "\n    \\" . $provider . "::class," . $result_content;
+        if(key_exists('content', $results)) {
+            $result_content = $results['content'];
+            $result_content = "\n    \\" . $provider . "::class," . $result_content;
+            $content = str_replace($results['content'], $result_content, $content);
+
+            $this->filesystem->update(self::BUILDER_FILE, $content);
+            return;
+        }
+
+        $result_content = $results[0] . ", [\n    \\" . $provider . "::class,\n]";
         $content = str_replace($results['content'], $result_content, $content);
 
         $this->filesystem->update(self::BUILDER_FILE, $content);
