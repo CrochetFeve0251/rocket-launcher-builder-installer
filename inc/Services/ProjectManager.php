@@ -44,10 +44,19 @@ class ProjectManager
 
         $content = $this->filesystem->read(self::PROJECT_FILE);
         $json = json_decode($content,true);
-        if(! $json || ! array_key_exists('require-dev', $json)) {
+        if(! $json) {
             return;
         }
-        $required = $json['require-dev'];
+
+        $required = [];
+
+        if(array_key_exists('require-dev', $json)) {
+            $required = array_merge($required, $json['require-dev']);
+        }
+
+        if(array_key_exists('require', $json)) {
+            $required = array_merge($required, $json['require']);
+        }
 
         foreach ($required as $package => $version) {
             if(! preg_match('/-take-off$/', $package)) {
@@ -190,10 +199,20 @@ class ProjectManager
 
         $this->filesystem->update(self::BUILDER_FILE, $content);
 
+        $content = $this->filesystem->read(self::PROJECT_FILE);
+
         $json = json_decode($content, true);
+
+        if(!$json) {
+            return;
+        }
 
         if(key_exists('require-dev', $json) && key_exists($package, $json['require-dev'])) {
             unset($json['require-dev'][$package]);
+        }
+
+        if(key_exists('require', $json) && key_exists($package, $json['require'])) {
+            unset($json['require'][$package]);
         }
 
         $content = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . "\n";
