@@ -206,7 +206,7 @@ class ProjectManager
     protected function clean_up( string $provider, string $package ) {
         $content = $this->filesystem->read(self::BUILDER_FILE);
 
-        $content = preg_replace('/\n *\\\\' . preg_quote($provider) . '::class,\n/', '', $content);
+        $content = preg_replace('/ *\\\\' . preg_quote($provider) . '::class,\n/', '', $content);
 
         $this->filesystem->update(self::BUILDER_FILE, $content);
 
