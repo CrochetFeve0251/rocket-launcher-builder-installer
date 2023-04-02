@@ -71,13 +71,11 @@ class ProjectManager
 
             $provider = $this->get_provider($configs);
 
-            if(! $provider || $this->has_provider_installed($provider) ) {
-                continue;
+            if( $provider && ! $this->has_provider_installed($provider) ) {
+                $this->install_provider($provider);
+
+                $this->interactor->info("$package: Successfully installed provider successful\n");
             }
-
-            $this->install_provider($provider);
-
-            $this->interactor->info("$package: Successfully installed provider successful\n");
 
             $libraries = $this->get_libraries($configs);
 
