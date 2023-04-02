@@ -11,6 +11,8 @@ use RocketLauncherBuilderInstaller\Services\ProjectManager;
 class ServiceProvider implements ServiceProviderInterface
 {
     /**
+     * Interacts with the filesystem.
+     *
      * @var Filesystem
      */
     protected $filesystem;
@@ -34,6 +36,13 @@ class ServiceProvider implements ServiceProviderInterface
         $this->filesystem = $filesystem;
     }
 
+    /**
+     * Attach library commands to the application.
+     *
+     * @param App $app Application.
+     *
+     * @return App
+     */
     public function attach_commands(App $app): App
     {
         $project_manager = new ProjectManager($this->configs, $this->filesystem, $app->io());

@@ -8,10 +8,17 @@ use RocketLauncherBuilderInstaller\Services\ProjectManager;
 class InstallModuleCommand extends Command
 {
     /**
+     * Handle project operations.
+     *
      * @var ProjectManager
      */
     protected $project_manager;
 
+    /**
+     * Instantiate the class.
+     *
+     * @param ProjectManager $project_manager Handle project operations.
+     */
     public function __construct(ProjectManager $project_manager)
     {
         parent::__construct('auto-install', 'Auto install modules');
@@ -27,6 +34,12 @@ class InstallModuleCommand extends Command
             );
     }
 
+    /**
+     * Execute the command.
+     *
+     * @return void
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     public function execute() {
         $this->project_manager->install();
     }

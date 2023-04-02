@@ -10,16 +10,22 @@ use RocketLauncherBuilder\Entities\Configurations;
 class ProjectManager
 {
     /**
+     * Configuration from the project.
+     *
      * @var Configurations
      */
     protected $configurations;
 
     /**
+     * Interacts with the filesystem.
+     *
      * @var Filesystem
      */
     protected $filesystem;
 
     /**
+     * Interacts with the user.
+     *
      * @var Interactor
      */
     protected $interactor;
@@ -28,7 +34,11 @@ class ProjectManager
     const BUILDER_FILE = 'bin/generator';
 
     /**
-     * @param Filesystem $filesystem
+     * Instantiate the class.
+     *
+     * @param Configurations $configurations Configuration from the project.
+     * @param Filesystem $filesystem Interacts with the filesystem.
+     * @param Interactor $interactor Interacts with the user.
      */
     public function __construct(Configurations $configurations, Filesystem $filesystem, Interactor $interactor)
     {
@@ -37,6 +47,12 @@ class ProjectManager
         $this->interactor = $interactor;
     }
 
+    /**
+     * Install libraries.
+     *
+     * @return void
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     public function install() {
         if( ! $this->filesystem->has(self::PROJECT_FILE)) {
             return;
@@ -91,6 +107,14 @@ class ProjectManager
         }
     }
 
+    /**
+     * Get library configurations.
+     *
+     * @param string $name library name.
+     *
+     * @return array|mixed
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     protected function get_library_configurations(string $name) {
         $composer_file = "vendor/$name/" . self::PROJECT_FILE;
         if(! $this->filesystem->has($composer_file)) {
@@ -104,6 +128,13 @@ class ProjectManager
         return $json['extra']['rocket-launcher'];
     }
 
+    /**
+     * Get provider from configurations.
+     *
+     * @param array $configs configurations from the library.
+     *
+     * @return string
+     */
     protected function get_provider(array $configs) {
         if( ! key_exists('provider', $configs) ) {
             return '';
@@ -112,6 +143,14 @@ class ProjectManager
         return $configs['provider'];
     }
 
+    /**
+     * IS the provider installed.
+     *
+     * @param string $provider provider name.
+     *
+     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     protected function has_provider_installed(string $provider){
 
         if ( ! $this->filesystem->has( self::BUILDER_FILE ) ) {
@@ -120,9 +159,16 @@ class ProjectManager
 
         $content = $this->filesystem->read( self::BUILDER_FILE );
 
-        return preg_match("/\\\\?" . $provider . "::class,?/", $content);
+        return (bool) preg_match("/\\\\?" . $provider . "::class,?/", $content);
     }
 
+    /**
+     * Install the provider.
+     *
+     * @param string $provider provider name.
+     * @return void
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     protected function install_provider(string $provider) {
 
         if ( ! $this->filesystem->has( self::BUILDER_FILE ) ) {
@@ -151,6 +197,13 @@ class ProjectManager
         $this->filesystem->update(self::BUILDER_FILE, $content);
     }
 
+    /**
+     * Handle the package command.
+     *
+     * @param array $configs configurations from the library.
+     * @param string $package provider name.
+     * @return void
+     */
     protected function handle_command(array $configs, string $package) {
         $command = $this->get_command($configs);
 
@@ -167,6 +220,13 @@ class ProjectManager
         $this->interactor->info("$package: Take off successful\n");
     }
 
+    /**
+     * Get the library command.
+     *
+     * @param array $configs configurations from the library.
+     *
+     * @return mixed|string
+     */
     protected function get_command(array $configs) {
         if( ! key_exists('command', $configs) ) {
             return '';
@@ -175,6 +235,13 @@ class ProjectManager
         return $configs['command'];
     }
 
+    /**
+     * Should the library auto install.
+     *
+     * @param array $configs configurations from the library.
+     *
+     * @return mixed|string
+     */
     protected function should_auto_install(array $configs) {
         if( ! key_exists('install', $configs) ) {
             return '';
@@ -183,12 +250,25 @@ class ProjectManager
         return $configs['install'];
     }
 
+    /**
+     * Auto install the library.
+     *
+     * @param string $command library command.
+     * @return void
+     */
     protected function auto_install(string $command ) {
         $shell = new Shell("{$this->filesystem->getAdapter()->getPathPrefix()}/bin/generator $command");
 
         $shell->execute();
     }
 
+    /**
+     * Should the library be cleaned.
+     *
+     * @param array $configs configurations from the library.
+     *
+     * @return boolean
+     */
     protected function should_clean(array $configs) {
         if( ! key_exists('clean', $configs) ) {
             return false;
@@ -197,6 +277,16 @@ class ProjectManager
         return $configs['clean'];
     }
 
+    /**
+     * Clean up the library.
+     *
+     * @param string $provider provider name.
+     *
+     * @param string $package provider name.
+     *
+     * @return void
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     protected function clean_up( string $provider, string $package ) {
         $content = $this->filesystem->read(self::BUILDER_FILE);
 
@@ -225,6 +315,13 @@ class ProjectManager
         $this->filesystem->update(self::PROJECT_FILE, $content);
     }
 
+    /**
+     * Get libraries to install.
+     *
+     * @param array $configs configurations from the library.
+     *
+     * @return array|mixed
+     */
     protected function get_libraries(array $configs) {
         if( ! key_exists('libraries', $configs) ) {
             return [];
@@ -233,6 +330,16 @@ class ProjectManager
         return $configs['libraries'];
     }
 
+    /**
+     * Install the library.
+     *
+     * @param string $library library name.
+     *
+     * @param string $version library version.
+     *
+     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     protected function install_library(string $library, string $version) {
         if( ! $this->filesystem->has(self::PROJECT_FILE)) {
             return false;
