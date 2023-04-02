@@ -1,11 +1,11 @@
 <?php
 
-namespace RocketLauncherBuilderInstaller\Services;
+namespace LaunchpadCLIInstaller\Services;
 
 use Ahc\Cli\Helper\Shell;
 use Ahc\Cli\IO\Interactor;
 use League\Flysystem\Filesystem;
-use RocketLauncherBuilder\Entities\Configurations;
+use LaunchpadCLI\Entities\Configurations;
 
 class ProjectManager
 {
@@ -122,10 +122,10 @@ class ProjectManager
         }
         $content = $this->filesystem->read($composer_file);
         $json = json_decode($content,true);
-        if(! $json || ! key_exists('extra', $json) || ! key_exists('rocket-launcher', $json['extra'])) {
+        if(! $json || ! key_exists('extra', $json) || ! key_exists('launchpad', $json['extra'])) {
             return [];
         }
-        return $json['extra']['rocket-launcher'];
+        return $json['extra']['launchpad'];
     }
 
     /**

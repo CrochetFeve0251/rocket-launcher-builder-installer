@@ -1,9 +1,9 @@
 <?php
 
-namespace RocketLauncherBuilderInstaller\Command;
+namespace LaunchpadCLIInstaller\Command;
 
-use RocketLauncherBuilder\Commands\Command;
-use RocketLauncherBuilderInstaller\Services\ProjectManager;
+use LaunchpadCLI\Commands\Command;
+use LaunchpadCLIInstaller\Services\ProjectManager;
 
 class InstallModuleCommand extends Command
 {

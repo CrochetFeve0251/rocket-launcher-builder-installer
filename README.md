@@ -4,19 +4,19 @@ Install libraries from the Rocket Launcher Framework.
 ## Install
 To install run the following command : `composer require crochetfeve0251/rocket-launcher-logger-take-off`
 
-Then you need to add the provider `RocketLauncherBuilderInstaller\ServiceProvider` to the `/bin/generator` file:
+Then you need to add the provider `LaunchpadCLIInstaller\ServiceProvider` to the `/bin/generator` file:
 
 ```php
 #!/usr/bin/php
 <?php
 
-use RocketLauncherBuilder\AppBuilder;
+use LaunchpadCLI\AppBuilder;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 AppBuilder::init(__DIR__ . '/../', [
         \RocketLauncherTakeOff\ServiceProvider::class,
-        \RocketLauncherBuilderInstaller\ServiceProvider::class,
+        \LaunchpadCLIInstaller\ServiceProvider::class,
 ]);
 ```
 
