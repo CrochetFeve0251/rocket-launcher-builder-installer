@@ -59,10 +59,6 @@ class ProjectManager
         }
 
         foreach ($required as $package => $version) {
-            if(! preg_match('/-take-off$/', $package)) {
-                continue;
-            }
-
             $configs = $this->get_library_configurations( $package );
 
             if( ! $configs ) {
