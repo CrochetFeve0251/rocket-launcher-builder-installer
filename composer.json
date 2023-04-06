@@ -1,6 +1,6 @@
 {
-  "name": "crochetfeve0251/rocket-launcher-builder-installer",
-  "description": "Initialisation library rocket launcher modules",
+  "name": "wp-launchpad/cli-installer",
+  "description": "Initialisation library for Launchpad libraries",
   "minimum-stability": "stable",
   "license": "GPL-2.0-or-later",
   "type": "library",
@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "crochetfeve0251/rocket-launcher-builder": "^1.0.0",
+    "wp-launchpad/cli": "^1.0.1",
     "ext-json": "*"
   },
   "require-dev": {
@@ -20,12 +20,12 @@
   },
   "autoload": {
     "psr-4": {
-      "RocketLauncherBuilderInstaller\\": "inc/"
+      "LaunchpadCLIInstaller\\": "inc/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "RocketLauncherBuilderInstaller\\Tests\\": "tests/"
+      "LaunchpadCLIInstaller\\Tests\\": "tests/"
     }
   }
 }

@@ -1,12 +1,12 @@
 <?php
-namespace RocketLauncherBuilderInstaller;
+namespace LaunchpadCLIInstaller;
 
 use League\Flysystem\Filesystem;
-use RocketLauncherBuilder\App;
-use RocketLauncherBuilder\Entities\Configurations;
-use RocketLauncherBuilder\ServiceProviders\ServiceProviderInterface;
-use RocketLauncherBuilderInstaller\Command\InstallModuleCommand;
-use RocketLauncherBuilderInstaller\Services\ProjectManager;
+use LaunchpadCLI\App;
+use LaunchpadCLI\Entities\Configurations;
+use LaunchpadCLI\ServiceProviders\ServiceProviderInterface;
+use LaunchpadCLIInstaller\Command\InstallModuleCommand;
+use LaunchpadCLIInstaller\Services\ProjectManager;
 
 class ServiceProvider implements ServiceProviderInterface
 {

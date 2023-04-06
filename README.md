@@ -1,22 +1,22 @@
-# rocket-launcher-builder-installer
-Install libraries from the Rocket Launcher Framework.
+# installer
+Install libraries from the Launchpad Framework.
 
 ## Install
-To install run the following command : `composer require crochetfeve0251/rocket-launcher-logger-take-off`
+To install run the following command : `composer require wp-launchpad/installer`
 
-Then you need to add the provider `RocketLauncherBuilderInstaller\ServiceProvider` to the `/bin/generator` file:
+Then you need to add the provider `LaunchpadCLIInstaller\ServiceProvider` to the `/bin/generator` file:
 
 ```php
 #!/usr/bin/php
 <?php
 
-use RocketLauncherBuilder\AppBuilder;
+use LaunchpadCLI\AppBuilder;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 AppBuilder::init(__DIR__ . '/../', [
-        \RocketLauncherTakeOff\ServiceProvider::class,
-        \RocketLauncherBuilderInstaller\ServiceProvider::class,
+        \LaunchpadTakeOff\ServiceProvider::class,
+        \LaunchpadCLIInstaller\ServiceProvider::class,
 ]);
 ```
 
@@ -25,7 +25,7 @@ AppBuilder::init(__DIR__ . '/../', [
 To make a library compatible you need to add the following content:
 ```json
 "extra": {
-    "rocket-launcher": {
+    "launchpad": {
       "provider" : "MyProvider",
       "command": "my-command",
       "install": true,
