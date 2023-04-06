@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "wp-launchpad/cli": "^1.0.0",
+    "wp-launchpad/cli": "^1.0.1",
     "ext-json": "*"
   },
   "require-dev": {
