@@ -1,5 +1,5 @@
 {
-  "name": "wp-launchpad/launchpad-cli-installer",
+  "name": "wp-launchpad/cli-installer",
   "description": "Initialisation library for Launchpad libraries",
   "minimum-stability": "stable",
   "license": "GPL-2.0-or-later",
