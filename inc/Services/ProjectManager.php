@@ -159,7 +159,7 @@ class ProjectManager
 
         $content = $this->filesystem->read( self::BUILDER_FILE );
 
-        return (bool) preg_match("/\\\\?" . $provider . "::class,?/", $content);
+        return (bool) preg_match("/" . str_replace('\\', '\\\\', $provider) . "::class,?/", $content);
     }
 
     /**
@@ -195,6 +195,16 @@ class ProjectManager
         $content = str_replace($results['content'], $result_content, $content);
 
         $this->filesystem->update(self::BUILDER_FILE, $content);
+    }
+
+    protected function is_already_installed(string $provider) {
+        if ( ! $this->filesystem->has( self::BUILDER_FILE ) ) {
+            return;
+        }
+
+        $content = $this->filesystem->read( self::BUILDER_FILE );
+
+        return preg_match("/$provider::class/", $content);
     }
 
     /**
@@ -290,7 +300,7 @@ class ProjectManager
     protected function clean_up( string $provider, string $package ) {
         $content = $this->filesystem->read(self::BUILDER_FILE);
 
-        $content = preg_replace('/ *\\\\' . preg_quote($provider) . '::class,\n/', '', $content);
+        $content = preg_replace('/ *\\\\?' . str_replace('\\', '\\\\', $provider) . '::class,?\n/', '', $content);
 
         $this->filesystem->update(self::BUILDER_FILE, $content);
 
