@@ -357,7 +357,7 @@ class ProjectManager
 
         $content = $this->filesystem->read(self::PROJECT_FILE);
         $json = json_decode($content,true);
-        if(! $json || ! array_key_exists('require-dev', $json) || ! array_key_exists('extra', $json) || ! array_key_exists('mozart', $json['extra']) || ! array_key_exists('packages', $json['extra']['mozart'])) {
+        if(! $json || ! array_key_exists('require-dev', $json) || ! array_key_exists('extra', $json) ) {
             return false;
         }
 
@@ -365,8 +365,12 @@ class ProjectManager
             $json['require-dev'][$library] = $version;
         }
 
-        if(! in_array($library, $json['extra']['mozart']['packages'])) {
+        if( array_key_exists('mozart', $json['extra']) && array_key_exists('packages', $json['extra']['mozart']) && ! in_array($library, $json['extra']['mozart']['packages'])) {
             $json['extra']['mozart']['packages'][] = $library;
+        }
+
+        if( array_key_exists('strauss', $json['extra']) && array_key_exists('packages', $json['extra']['strauss']) && ! in_array($library, $json['extra']['strauss']['packages'])) {
+            $json['extra']['strauss']['packages'][] = $library;
         }
 
         $content = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . "\n";
