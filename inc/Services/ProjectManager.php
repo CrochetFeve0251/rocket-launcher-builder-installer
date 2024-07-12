@@ -97,7 +97,7 @@ class ProjectManager
 
             $this->handle_command($configs, $package);
 
-            if(! $this->should_clean($configs)) {
+            if( ! $this->should_clean($configs) || ! $provider ) {
                 continue;
             }
 
