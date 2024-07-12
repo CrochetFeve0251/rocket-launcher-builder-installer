@@ -98,6 +98,10 @@ class ProjectManager
 
             $library_provider = $this->get_library_provider($configs);
 
+            $dependencies_prefix = $this->get_dependencies_prefix();
+
+            $library_provider = $dependencies_prefix . $library_provider;
+
             if($library_provider && ! $this->has_library_provider_installed($library_provider) ) {
                 $this->install_library_provider($library_provider);
             }
@@ -452,5 +456,21 @@ class ProjectManager
         $this->filesystem->update(self::PROJECT_FILE, $content);
 
         return true;
+    }
+
+    /**
+     * Returns the dependencies prefix.
+     *
+     * @return string
+     */
+    public function get_dependencies_prefix(): string
+    {
+        $content = $this->filesystem->read(self::PROJECT_FILE);
+        $json = json_decode($content,true);
+        if( ! array_key_exists('strauss', $json['extra']) || ! array_key_exists('namespace_prefix', $json['extra']['strauss']) ) {
+            return '';
+        }
+
+        return $json['extra']['strauss']['namespace_prefix'];
     }
 }
