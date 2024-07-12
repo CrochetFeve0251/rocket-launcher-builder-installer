@@ -2,7 +2,7 @@
 Install libraries from the Launchpad Framework.
 
 ## Install
-To install run the following command : `composer require wp-launchpad/installer`
+To install run the following command : `composer require wp-launchpad/cli-installer`
 
 Then you need to add the provider `LaunchpadCLIInstaller\ServiceProvider` to the `/bin/generator` file:
 
