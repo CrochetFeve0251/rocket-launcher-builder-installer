@@ -32,6 +32,7 @@ class ProjectManager
 
     const PROJECT_FILE = 'composer.json';
     const BUILDER_FILE = 'bin/generator';
+    const PROVIDER_FILE = 'configs/providers.php';
 
     /**
      * Instantiate the class.
@@ -95,6 +96,16 @@ class ProjectManager
                 $this->install_library($library, $library_version);
             }
 
+            $library_provider = $this->get_library_provider($configs);
+
+            $dependencies_prefix = $this->get_dependencies_prefix();
+
+            $library_provider = $dependencies_prefix . $library_provider;
+
+            if($library_provider && ! $this->has_library_provider_installed($library_provider) ) {
+                $this->install_library_provider($library_provider);
+            }
+
             $this->handle_command($configs, $package);
 
             if(! $this->should_clean($configs)) {
@@ -144,6 +155,21 @@ class ProjectManager
     }
 
     /**
+     * Get library provider from configurations.
+     *
+     * @param array $configs configurations from the library.
+     *
+     * @return string
+     */
+    protected function get_library_provider(array $configs) {
+        if( ! key_exists('library_provider', $configs) ) {
+            return '';
+        }
+
+        return $configs['library_provider'];
+    }
+
+    /**
      * IS the provider installed.
      *
      * @param string $provider provider name.
@@ -158,6 +184,25 @@ class ProjectManager
         }
 
         $content = $this->filesystem->read( self::BUILDER_FILE );
+
+        return (bool) preg_match("/" . str_replace('\\', '\\\\', $provider) . "::class,?/", $content);
+    }
+
+    /**
+     * IS the provider installed.
+     *
+     * @param string $provider provider name.
+     *
+     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    protected function has_library_provider_installed(string $provider){
+
+        if ( ! $this->filesystem->has( self::PROJECT_FILE ) ) {
+            return true;
+        }
+
+        $content = $this->filesystem->read( self::PROJECT_FILE );
 
         return (bool) preg_match("/" . str_replace('\\', '\\\\', $provider) . "::class,?/", $content);
     }
@@ -195,6 +240,40 @@ class ProjectManager
         $content = str_replace($results['content'], $result_content, $content);
 
         $this->filesystem->update(self::BUILDER_FILE, $content);
+    }
+
+    /**
+     * Install the library provider.
+     *
+     * @param string $provider provider name.
+     * @return void
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    protected function install_library_provider(string $provider) {
+
+        if ( ! $this->filesystem->has( self::PROVIDER_FILE ) ) {
+            return;
+        }
+
+        $content = $this->filesystem->read( self::PROVIDER_FILE );
+
+        if(! preg_match('/return\s*(\[(?<content>[^\]]*))?/', $content, $results)) {
+            return;
+        }
+
+        if(key_exists('content', $results)) {
+            $result_content = $results['content'];
+            $result_content = "\n    \\" . $provider . "::class," . $result_content;
+            $content = str_replace($results['content'], $result_content, $content);
+
+            $this->filesystem->update(self::PROVIDER_FILE, $content);
+            return;
+        }
+
+        $result_content = $results[0] . ", [\n    \\" . $provider . "::class,\n]";
+        $content = str_replace($results['content'], $result_content, $content);
+
+        $this->filesystem->update(self::PROVIDER_FILE, $content);
     }
 
     protected function is_already_installed(string $provider) {
@@ -377,5 +456,21 @@ class ProjectManager
         $this->filesystem->update(self::PROJECT_FILE, $content);
 
         return true;
+    }
+
+    /**
+     * Returns the dependencies prefix.
+     *
+     * @return string
+     */
+    public function get_dependencies_prefix(): string
+    {
+        $content = $this->filesystem->read(self::PROJECT_FILE);
+        $json = json_decode($content,true);
+        if( ! array_key_exists('strauss', $json['extra']) || ! array_key_exists('namespace_prefix', $json['extra']['strauss']) ) {
+            return '';
+        }
+
+        return $json['extra']['strauss']['namespace_prefix'];
     }
 }
