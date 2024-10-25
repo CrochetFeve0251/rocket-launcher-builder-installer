@@ -1,0 +1,31 @@
+{
+  "name": "wp-launchpad/cli-installer",
+  "description": "Initialisation library for Launchpad libraries",
+  "minimum-stability": "stable",
+  "license": "GPL-2.0-or-later",
+  "type": "library",
+  "authors": [
+    {
+      "name": "coquardcyr",
+      "email": "coquardcyr@gmail.com"
+    }
+  ],
+  "require": {
+    "wp-launchpad/cli": "^1.0.1",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5 || ^8 || ^9",
+    "wp-media/phpunit": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "LaunchpadCLIInstaller\\": "inc/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LaunchpadCLIInstaller\\Tests\\": "tests/"
+    }
+  }
+}
