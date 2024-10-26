@@ -1,7 +1,6 @@
 {
   "name": "wp-launchpad/cli-installer",
   "description": "Initialisation library for Launchpad libraries",
-  "minimum-stability": "stable",
   "license": "GPL-2.0-or-later",
   "type": "library",
   "authors": [
@@ -11,7 +10,7 @@
     }
   ],
   "require": {
-    "wp-launchpad/cli": "^1.0.1",
+    "wp-launchpad/cli": "^1.0.1 || @dev",
     "ext-json": "*"
   },
   "require-dev": {
