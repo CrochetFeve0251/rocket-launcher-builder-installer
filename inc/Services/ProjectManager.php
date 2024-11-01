@@ -100,10 +100,10 @@ class ProjectManager
 
             $dependencies_prefix = $this->get_dependencies_prefix();
 
-            $library_provider = $dependencies_prefix . $library_provider;
+            $prefixed_library_provider = $dependencies_prefix . $library_provider;
 
-            if($library_provider && ! $this->has_library_provider_installed($library_provider) ) {
-                $this->install_library_provider($library_provider);
+            if($library_provider && ! $this->has_library_provider_installed($prefixed_library_provider) ) {
+                $this->install_library_provider($prefixed_library_provider);
             }
 
             $this->handle_command($configs, $package);
